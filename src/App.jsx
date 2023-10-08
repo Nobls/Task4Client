@@ -10,9 +10,9 @@ function App() {
     const router = createBrowserRouter(
         createRoutesFromElements(
             <Route path='/' element={<LayoutPage/>}>
-                <Route index element={<Login/>}/>
+                <Route index element={<Home/>}/>
+                <Route path='login' element={<Login/>}/>
                 <Route path='registration' element={<Registration/>}/>
-                <Route path='home' element={<Home/>}/>
             </Route>
         )
     )

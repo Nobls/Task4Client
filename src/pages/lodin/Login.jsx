@@ -2,6 +2,7 @@ import React from 'react';
 import {Button, Form, Input} from "antd";
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import {Link} from "react-router-dom";
+import s from '../../styles/style.module.scss'
 
 export const Login = () => {
     const onFinish = (values) => {
@@ -10,25 +11,15 @@ export const Login = () => {
     return (
         <Form
             name="normal_login"
-            className="login-form"
-            style={{
-                width: '400px',
-                height: '250px',
-                display:'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center'
-            }}
+            className={s.formStyles}
             initialValues={{
-                remember: true,
+                remember: false,
             }}
             onFinish={onFinish}
         >
             <Form.Item
                 name="username"
-                style={{
-                    width: '300px'
-                }}
+                className={s.input}
                 rules={[
                     {
                         required: true,
@@ -40,9 +31,7 @@ export const Login = () => {
             </Form.Item>
             <Form.Item
                 name="password"
-                style={{
-                    width: '300px'
-                }}
+                className={s.input}
                 rules={[
                     {
                         required: true,
@@ -72,7 +61,7 @@ export const Login = () => {
                 style={{
                     marginLeft:'5px'
                 }}
-                to={'registration'}
+                to={'/registration'}
                 href="">register now!
             </Link>
             </Form.Item>

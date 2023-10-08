@@ -1,6 +1,6 @@
 import React from 'react';
 import {Layout, Menu, theme} from 'antd';
-import {Outlet} from "react-router-dom";
+import {Link, Outlet} from "react-router-dom";
 
 const {Header, Content, Footer} = Layout;
 
@@ -18,7 +18,7 @@ export const LayoutPage = () => {
                     justifyContent: 'flex-end'
                 }}
             >
-                <div className="demo-logo" />
+                <div className="demo-logo">{<Link to={'/'}>Home</Link>}</div>
                 <Menu
                     theme="dark"
                     mode="horizontal"
@@ -38,7 +38,9 @@ export const LayoutPage = () => {
                     style={{
                         background: colorBgContainer,
                         display: 'flex',
-                        justifyContent: 'center'
+                        height: '650px',
+                        justifyContent: 'center',
+                        alignItems: 'center'
                     }}
                 >
                     <Outlet/>
