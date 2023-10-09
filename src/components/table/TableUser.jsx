@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import {Divider, Radio, Table} from "antd";
+import {Button, Divider, Radio, Table} from "antd";
+import {DeleteOutlined, LockOutlined, UnlockOutlined} from "@ant-design/icons";
 
 const columns = [
     {
@@ -8,58 +9,75 @@ const columns = [
         render: (text) => <a>{text}</a>,
     },
     {
-        title: 'Age',
-        dataIndex: 'age',
+        title: 'E-mail',
+        dataIndex: 'email',
     },
     {
-        title: 'Address',
-        dataIndex: 'address',
+        title: 'Last Login',
+        dataIndex: 'lastLogin',
+    },
+    {
+        title: 'Status',
+        dataIndex: 'status',
     },
 ];
 const data = [
     {
         key: '1',
         name: 'John Brown',
-        age: 32,
-        address: 'New York No. 1 Lake Park',
+        lastLogin: '01.01.2022',
+        email: 'test@gmail.com',
+        status: 'Active',
     },
     {
         key: '2',
         name: 'Jim Green',
-        age: 42,
-        address: 'London No. 1 Lake Park',
+        lastLogin: '01.01.2022',
+        email: 'test@gmail.com',
+        status: 'Active',
     },
     {
         key: '3',
-        name: 'Joe Black',
-        age: 32,
-        address: 'Sydney No. 1 Lake Park',
-    },
-    {
-        key: '4',
-        name: 'Disabled User',
-        age: 99,
-        address: 'Sydney No. 1 Lake Park',
-    },
+        name: 'Jim Green',
+        lastLogin: '01.01.2022',
+        email: 'test@gmail.com',
+        status: 'Active',
+    }
 ];
-
-// rowSelection object indicates the need for row selection
-const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-    },
-    getCheckboxProps: (record) => ({
-        disabled: record.name === 'Disabled User',
-        // Column configuration not to be checked
-        name: record.name,
-    }),
-};
 
 export const TableUser = () => {
 
     const [selectionType, setSelectionType] = useState('checkbox');
+    const [selectedRows, setSelectedRows] = useState([]);
+
+    const rowSelection = {
+        onChange: (selectedRowKeys, selectedRows) => {
+            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+            setSelectedRows(selectedRows);
+        }
+    }
+
+    const handleDeleteUser = () => {
+        console.log('Delete selected user:', selectedRows);
+    };
+    const handleLockUser = () => {
+        console.log('Lock selected user:', selectedRows);
+    };
+    const handleUnlockUser = () => {
+        console.log('Unlock selected user:', selectedRows);
+    };
+
     return (
         <div>
+            <div style={{
+                width:'200px',
+                display:'flex',
+                justifyContent:'space-between'
+            }}>
+                <Button onClick={handleLockUser}><LockOutlined /> Block</Button>
+                <Button onClick={handleUnlockUser}><UnlockOutlined /></Button>
+                <Button onClick={handleDeleteUser} danger type={'primary'}><DeleteOutlined /></Button>
+            </div>
             <Radio.Group
                 onChange={({ target: { value } }) => {
                     setSelectionType(value);

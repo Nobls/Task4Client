@@ -1,30 +1,24 @@
 import React from 'react';
 import {Layout, Menu, theme} from 'antd';
 import {Link, Outlet} from "react-router-dom";
+import {User} from "../user/User";
 
 const {Header, Content, Footer} = Layout;
 
 export const LayoutPage = () => {
     const {
-        token: { colorBgContainer },
+        token: {colorBgContainer},
     } = theme.useToken();
 
     return (
         <Layout className="layout">
-            <Header
-                style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'flex-end'
-                }}
-            >
-                <div className="demo-logo">{<Link to={'/'}>Home</Link>}</div>
-                <Menu
-                    theme="dark"
-                    mode="horizontal"
-                    defaultSelectedKeys={['2']}
-                    /*items={}*/
-                />
+            <Header style={{
+                backgroundColor: 'slategray',
+            }}>
+                <div style={{display: "flex", justifyContent:'flex-end'}}>
+                    <div style={{fontSize:'20px', marginRight:'5px'}}>Hello,</div>
+                    <User/>
+                </div>
             </Header>
             <Content
                 style={{
