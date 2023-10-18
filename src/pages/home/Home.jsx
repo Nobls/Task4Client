@@ -1,15 +1,27 @@
-import React, {useState} from 'react';
-import {Link} from "react-router-dom";
-import {Button} from "antd";
+import React, {useEffect, useState} from 'react';
 import {TableUser} from "../../components/table/TableUser";
+import {useDispatch, useSelector} from "react-redux";
+import {fetchAuthMe, selectedIsAuth} from "../../redux/slices/auth";
 
 export const Home = () => {
 
-    const [auth, setAuth] = useState(true)
+    const dispatch = useDispatch()
+    const isAuth = useSelector(selectedIsAuth)
+
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        dispatch(fetchAuthMe())
+            .then(() => setLoading(false))
+    }, [dispatch])
+
+    if (loading) {
+        return <div>Загрузка...</div>
+    }
 
     return (
         <div>
-            { auth ?  <TableUser/> : <Button type={"primary"} size='large'>{<Link to={'/login'}>Login</Link>}</Button>}
+            { isAuth ?  <TableUser/> : <div>Авторизуйтесь</div>}
         </div>
     );
 };

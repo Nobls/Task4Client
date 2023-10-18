@@ -1,11 +1,18 @@
 import React from 'react';
-import {Layout, Menu, theme} from 'antd';
+import {Button, Layout, theme} from 'antd';
 import {Link, Outlet} from "react-router-dom";
 import {User} from "../user/User";
+import {useSelector} from "react-redux";
+import {selectedIsAuth} from "../../redux/slices/auth";
 
 const {Header, Content, Footer} = Layout;
 
 export const LayoutPage = () => {
+
+    const isAuth = useSelector(selectedIsAuth)
+
+    const userData = useSelector((state)=> state.auth.data)
+
     const {
         token: {colorBgContainer},
     } = theme.useToken();
@@ -15,9 +22,11 @@ export const LayoutPage = () => {
             <Header style={{
                 backgroundColor: 'slategray',
             }}>
-                <div style={{display: "flex", justifyContent:'flex-end'}}>
+                <div style={{display: "flex", justifyContent:'flex-end', alignItems:'center'}}>
                     <div style={{fontSize:'20px', marginRight:'5px'}}>Hello,</div>
-                    <User/>
+                    {
+                        isAuth ? <User userData={userData}/> : <Button type={'default'}>{<Link to={'/login'}>Войти</Link>}</Button>
+                    }
                 </div>
             </Header>
             <Content

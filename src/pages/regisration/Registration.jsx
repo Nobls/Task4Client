@@ -1,13 +1,30 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Button, Form, Input} from "antd";
 import s from '../../styles/style.module.scss'
+import {useDispatch, useSelector} from "react-redux";
+import {fetchRegister, selectedIsAuth} from "../../redux/slices/auth";
+import {useNavigate} from "react-router-dom";
+import {toast} from "react-toastify";
 
 
 export const Registration = () => {
 
+    const dispatch = useDispatch()
+
+    const {status} = useSelector((state) => state.auth)
+    const isAuth = useSelector(selectedIsAuth)
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (status) {
+            toast(status)
+        }
+        if (isAuth) navigate('/')
+    }, [status, isAuth, navigate])
+
     const [form] = Form.useForm();
-    const onFinish = (values) => {
-        console.log('Received values of form: ', values);
+    const onFinish = async (values) => {
+        const data = await dispatch(fetchRegister(values))
     };
 
     return (
@@ -33,7 +50,7 @@ export const Registration = () => {
                     },
                 ]}
             >
-                <Input />
+                <Input/>
             </Form.Item>
 
             <Form.Item
@@ -48,7 +65,21 @@ export const Registration = () => {
                 ]}
                 hasFeedback
             >
-                <Input.Password />
+                <Input.Password/>
+            </Form.Item>
+
+            <Form.Item
+                name="username"
+                label="Username"
+                className={s.input}
+                rules={[
+                    {
+                        required: true,
+                        message: 'Please input your name',
+                    },
+                ]}
+            >
+                <Input/>
             </Form.Item>
 
             <Form.Item
@@ -61,7 +92,7 @@ export const Registration = () => {
                     },
                 ]}
             >
-                <Input />
+                <Input/>
             </Form.Item>
 
             <Form.Item>

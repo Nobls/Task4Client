@@ -1,12 +1,31 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Button, Form, Input} from "antd";
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import {Link} from "react-router-dom";
+import {LockOutlined, MailOutlined} from '@ant-design/icons';
+import {Link, useNavigate} from "react-router-dom";
 import s from '../../styles/style.module.scss'
+import {useDispatch, useSelector} from "react-redux";
+import {fetchLogin, selectedIsAuth} from "../../redux/slices/auth";
+import {toast} from "react-toastify";
 
 export const Login = () => {
-    const onFinish = (values) => {
-        console.log('Received values of form: ', values);
+
+    const dispatch = useDispatch()
+
+    const {status} = useSelector((state) => state.auth)
+
+    const isAuth = useSelector(selectedIsAuth)
+
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (status) {
+            toast(status)
+        }
+        if (isAuth) navigate('/')
+    }, [status, isAuth, navigate])
+
+    const onFinish = async (values) => {
+        const data = await dispatch(fetchLogin(values))
     };
     return (
         <Form
@@ -18,16 +37,16 @@ export const Login = () => {
             onFinish={onFinish}
         >
             <Form.Item
-                name="username"
+                name="email"
                 className={s.input}
                 rules={[
                     {
                         required: true,
-                        message: 'Please input your Username!',
+                        message: 'Please input your Email!',
                     },
                 ]}
             >
-                <Input prefix={<UserOutlined className="site-form-item-icon"/>} placeholder="Username"/>
+                <Input prefix={<MailOutlined className="site-form-item-icon"/>} placeholder="E-mail"/>
             </Form.Item>
             <Form.Item
                 name="password"
