@@ -6,6 +6,7 @@ const initialState = {
     data: null,
     token: null,
     status: null,
+    users: [],
     loading: false,
     errors: null,
 }
@@ -50,10 +51,28 @@ export const fetchRegister = createAsyncThunk(
     }
 )
 
-export const fetchAuthMe = createAsyncThunk('auth/fetchAuthMe', async () => {
-    const {data} = await axios.get('/auth/user')
-    return data
-})
+export const fetchAuthMe = createAsyncThunk(
+    'auth/fetchAuthMe',
+    async () => {
+        const {data} = await axios.get('/auth/user')
+        return data
+    })
+
+export const fetchUsers = createAsyncThunk(
+    'auth/fetchUsers',
+    async () => {
+        const {data} = await axios.get('/auth/users')
+        return data
+    }
+)
+
+export const fetchBlockUsers = createAsyncThunk(
+    'auth/fetchBlockUsers',
+    async (userId) => {
+        const {data} = await axios.post(`/block/${userId}`, userId)
+        return data
+    }
+)
 
 const authSlice = createSlice({
     name: 'auth',
@@ -64,7 +83,6 @@ const authSlice = createSlice({
         }
     },
     extraReducers: (builder) => {
-        //Login user
         builder.addCase(fetchLogin.pending, (state) => {
             state.loading = true;
             state.status = null
@@ -79,7 +97,6 @@ const authSlice = createSlice({
             state.status = action.payload
             state.loading = false;
         })
-        //Fetch authMe
         builder.addCase(fetchAuthMe.pending, (state) => {
             state.loading = true;
         })
@@ -90,7 +107,6 @@ const authSlice = createSlice({
         builder.addCase(fetchAuthMe.rejected, (state) => {
             state.loading = false;
         })
-        //Register user
         builder.addCase(fetchRegister.pending, (state) => {
             state.loading = true;
             state.status = null
@@ -101,6 +117,26 @@ const authSlice = createSlice({
         })
         builder.addCase(fetchRegister.rejected, (state) => {
             state.loading = false;
+        })
+        builder.addCase(fetchUsers.pending, (state) => {
+            state.loading = true
+        })
+        builder.addCase(fetchUsers.fulfilled, (state, action) => {
+            state.users = action.payload
+            state.loading = false
+        })
+        builder.addCase(fetchUsers.rejected, (state) => {
+            state.loading = true
+        })
+        builder.addCase(fetchBlockUsers.pending, (state) => {
+            state.loading = true
+        })
+        builder.addCase(fetchBlockUsers.fulfilled, (state, action) => {
+            state.users = action.payload
+            state.loading = false
+        })
+        builder.addCase(fetchBlockUsers.rejected, (state) => {
+            state.loading = true
         })
     }
 })
