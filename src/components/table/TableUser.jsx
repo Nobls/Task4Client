@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Divider, Radio, Table} from "antd";
 import {DeleteOutlined, LockOutlined, UnlockOutlined} from "@ant-design/icons";
-import {fetchBlockUsers, fetchUsers} from "../../redux/slices/auth";
+import {fetchBlockUsers, fetchRemoveUser, fetchUnBlockUsers, fetchUsers, logout} from "../../redux/slices/auth";
 import {useDispatch, useSelector} from "react-redux";
+import {useNavigate} from "react-router-dom";
 
 const columns = [
     {
@@ -30,6 +31,7 @@ const columns = [
 export const TableUser = () => {
 
     const dispatch = useDispatch()
+    const navigate = useNavigate()
 
     const [selectionType, setSelectionType] = useState('checkbox');
     const [selectedRows, setSelectedRows] = useState([]);
@@ -44,6 +46,7 @@ export const TableUser = () => {
     }
 
     const users = useSelector(state => state.auth.users);
+    const data = useSelector(state => state.auth.data);
 
     const usersWithKey = users.map((user) => ({
         ...user,
@@ -58,45 +61,59 @@ export const TableUser = () => {
 
     const handleDeleteUser = () => {
         console.log('Delete selected user:', selectedRows);
+        const isUserInSelection = selectedUserIds.includes(data._id);
+        dispatch(fetchRemoveUser(selectedUserIds)).then(() => {
+            if (isUserInSelection) {
+                dispatch(logout());
+                window.localStorage.removeItem('token')
+            }
+        })
     };
     const handleLockUser = () => {
         console.log('Lock selected user:', selectedUserIds);
-        dispatch(fetchBlockUsers(selectedUserIds))
+        const isUserInSelection = selectedUserIds.includes(data._id);
+        dispatch(fetchBlockUsers(selectedUserIds)).then(() => {
+            if (isUserInSelection) {
+                dispatch(logout());
+            } else navigate(0)
+        })
     };
     const handleUnlockUser = () => {
         console.log('Unlock selected user:', selectedRows);
+        dispatch(fetchUnBlockUsers(selectedUserIds))
+        navigate(0)
     };
 
-    return (
-        <div>
-            <div style={{
-                width:'200px',
-                display:'flex',
-                justifyContent:'space-between'
-            }}>
-                <Button onClick={handleLockUser}><LockOutlined /> Block</Button>
-                <Button onClick={handleUnlockUser}><UnlockOutlined /></Button>
-                <Button onClick={handleDeleteUser} danger type={'primary'}><DeleteOutlined /></Button>
+        return (
+            <div>
+                <div style={{
+                    width: '200px',
+                    display: 'flex',
+                    justifyContent: 'space-between'
+                }}>
+                    <Button onClick={handleLockUser}><LockOutlined/> Block</Button>
+                    <Button onClick={handleUnlockUser}><UnlockOutlined/></Button>
+                    <Button onClick={handleDeleteUser} danger type={'primary'}><DeleteOutlined/></Button>
+                </div>
+                <Radio.Group
+                    onChange={({target: {value}}) => {
+                        setSelectionType(value);
+                    }}
+                    value={selectionType}
+                >
+                </Radio.Group>
+
+                <Divider/>
+
+                <Table
+                    rowSelection={{
+                        type: selectionType,
+                        ...rowSelection,
+                    }}
+                    columns={columns}
+                    dataSource={usersWithKey}
+                />
             </div>
-            <Radio.Group
-                onChange={({ target: { value } }) => {
-                    setSelectionType(value);
-                }}
-                value={selectionType}
-            >
-            </Radio.Group>
+        );
 
-            <Divider />
-
-            <Table
-                rowSelection={{
-                    type: selectionType,
-                    ...rowSelection,
-                }}
-                columns={columns}
-                dataSource={usersWithKey}
-            />
-        </div>
-    );
-
-};
+    };

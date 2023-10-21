@@ -6,7 +6,7 @@ const instance = axios.create({
 
 instance.interceptors.request.use((config) => {
 
-        config.headers = config.headers ?? {}; //!исправляет ошибку неопределенности Object is possibly 'undefined'.
+        config.headers = config.headers ?? {};
 
         config.headers.Authorization = window.localStorage.getItem('token')
 

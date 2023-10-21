@@ -25,7 +25,7 @@ export const fetchLogin = createAsyncThunk(
 
             return data
         } catch (error) {
-            console.log(error)
+            return { error: 'Произошла ошибка при выполнении запроса.' }
         }
     })
 
@@ -74,13 +74,28 @@ export const fetchBlockUsers = createAsyncThunk(
     }
 )
 
+export const fetchUnBlockUsers = createAsyncThunk(
+    'auth/fetchUnBlockUsers',
+    async (userId) => {
+        const {data} = await axios.post(`/unblock/${userId}`, userId)
+        return data
+    }
+)
+
+export const fetchRemoveUser = createAsyncThunk(
+    'news/fetchRemoveUser',
+    async (userId) => {
+        const {data} = await axios.delete(`/delete/${userId}`, userId)
+        return data
+    })
+
 const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
         logout: (state) => {
             state.data = null
-        }
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(fetchLogin.pending, (state) => {
@@ -94,8 +109,9 @@ const authSlice = createSlice({
             state.token = action.payload.token
         })
         builder.addCase(fetchLogin.rejected, (state, action) => {
-            state.status = action.payload
             state.loading = false;
+            state.status = action.payload
+
         })
         builder.addCase(fetchAuthMe.pending, (state) => {
             state.loading = true;
@@ -132,11 +148,49 @@ const authSlice = createSlice({
             state.loading = true
         })
         builder.addCase(fetchBlockUsers.fulfilled, (state, action) => {
-            state.users = action.payload
             state.loading = false
+            state.users = state.users.map((user) => {
+                if (user._id === action.payload._id) {
+                    const updatedUser = {
+                        ...user,
+                        status: action.payload.newStatus,
+                    };
+                    return updatedUser;
+                }
+                return user;
+            });
         })
         builder.addCase(fetchBlockUsers.rejected, (state) => {
             state.loading = true
+        })
+        builder.addCase(fetchUnBlockUsers.pending, (state) => {
+            state.loading = true
+        })
+        builder.addCase(fetchUnBlockUsers.fulfilled, (state, action) => {
+            state.loading = false
+            state.users = state.users.map((user) => {
+                if (user._id === action.payload._id) {
+                    const updatedUser = {
+                        ...user,
+                        status: action.payload.newStatus,
+                    };
+                    return updatedUser;
+                }
+                return user;
+            });
+        })
+        builder.addCase(fetchUnBlockUsers.rejected, (state) => {
+            state.loading = true
+        })
+        builder.addCase(fetchRemoveUser.pending, (state) => {
+            state.loading = true;
+        })
+        builder.addCase(fetchRemoveUser.fulfilled, (state, action) => {
+            state.loading = false;
+            state.users = state.users.filter((user)=> user._id !== action.payload._id)
+        })
+        builder.addCase(fetchRemoveUser.rejected, (state) => {
+            state.loading = false;
         })
     }
 })

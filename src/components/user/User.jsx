@@ -17,7 +17,7 @@ export const User = ({userData}) => {
     }
 
     return (
-        <div style={{fontSize:'20px'}}>
+        <div style={{fontSize: '20px'}}>
             {userData.username}
             <Button style={{marginLeft:'10px'}} type={'default'} onClick={onClickLogout}>Logout</Button>
         </div>
