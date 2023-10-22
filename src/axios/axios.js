@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const instance = axios.create({
-    baseURL: 'http://localhost:5555'
+    baseURL: 'https://task4-client-two.vercel.app'
 })
 
 instance.interceptors.request.use((config) => {
