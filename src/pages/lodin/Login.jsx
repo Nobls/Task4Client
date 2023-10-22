@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button, Form, Input} from "antd";
 import {LockOutlined, MailOutlined} from '@ant-design/icons';
 import {Link, useNavigate} from "react-router-dom";
@@ -11,21 +11,24 @@ export const Login = () => {
 
     const dispatch = useDispatch()
 
-    const {status} = useSelector((state) => state.auth)
-
     const isAuth = useSelector(selectedIsAuth)
 
     const navigate = useNavigate()
 
+    const status = useSelector((state) => state.auth.status)
+
     useEffect(() => {
-        if (status) {
+        if (status === 'Такого юзера не существует.') {
             toast(status)
+            navigate('/login')
+        } else if (isAuth) {
+            toast(status)
+            navigate('/')
         }
-        if (isAuth) navigate('/')
     }, [status, isAuth, navigate])
 
     const onFinish = async (values) => {
-        const data = await dispatch(fetchLogin(values))
+         await dispatch(fetchLogin(values))
     };
     return (
         <Form
@@ -46,7 +49,10 @@ export const Login = () => {
                     },
                 ]}
             >
-                <Input prefix={<MailOutlined className="site-form-item-icon"/>} placeholder="E-mail"/>
+                <Input
+                    prefix={<MailOutlined className="site-form-item-icon"/>}
+                    placeholder="E-mail"
+                />
             </Form.Item>
             <Form.Item
                 name="password"

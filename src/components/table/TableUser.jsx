@@ -3,7 +3,6 @@ import {Button, Divider, Radio, Table} from "antd";
 import {DeleteOutlined, LockOutlined, UnlockOutlined} from "@ant-design/icons";
 import {fetchBlockUsers, fetchRemoveUser, fetchUnBlockUsers, fetchUsers, logout} from "../../redux/slices/auth";
 import {useDispatch, useSelector} from "react-redux";
-import {useNavigate} from "react-router-dom";
 
 const columns = [
     {
@@ -31,7 +30,6 @@ const columns = [
 export const TableUser = () => {
 
     const dispatch = useDispatch()
-    const navigate = useNavigate()
 
     const [selectionType, setSelectionType] = useState('checkbox');
     const [selectedRows, setSelectedRows] = useState([]);
@@ -57,8 +55,6 @@ export const TableUser = () => {
         dispatch(fetchUsers());
     }, [dispatch]);
 
-    console.log(users)
-
     const handleDeleteUser = () => {
         console.log('Delete selected user:', selectedRows);
         const isUserInSelection = selectedUserIds.includes(data._id);
@@ -66,7 +62,7 @@ export const TableUser = () => {
             if (isUserInSelection) {
                 dispatch(logout());
                 window.localStorage.removeItem('token')
-            }
+            } else dispatch(fetchUsers());
         })
     };
     const handleLockUser = () => {
@@ -75,13 +71,14 @@ export const TableUser = () => {
         dispatch(fetchBlockUsers(selectedUserIds)).then(() => {
             if (isUserInSelection) {
                 dispatch(logout());
-            } else navigate(0)
+            } else dispatch(fetchUsers());
         })
     };
     const handleUnlockUser = () => {
         console.log('Unlock selected user:', selectedRows);
-        dispatch(fetchUnBlockUsers(selectedUserIds))
-        navigate(0)
+        dispatch(fetchUnBlockUsers(selectedUserIds)).then(()=>{
+            dispatch(fetchUsers());
+        })
     };
 
         return (

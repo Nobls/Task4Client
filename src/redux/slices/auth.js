@@ -68,16 +68,16 @@ export const fetchUsers = createAsyncThunk(
 
 export const fetchBlockUsers = createAsyncThunk(
     'auth/fetchBlockUsers',
-    async (userId) => {
-        const {data} = await axios.post(`/block/${userId}`, userId)
+    async (userIds) => {
+        const {data} = await axios.post(`/block`, {userIds})
         return data
     }
 )
 
 export const fetchUnBlockUsers = createAsyncThunk(
     'auth/fetchUnBlockUsers',
-    async (userId) => {
-        const {data} = await axios.post(`/unblock/${userId}`, userId)
+    async (userIds) => {
+        const {data} = await axios.post(`/unblock`, {userIds})
         return data
     }
 )
@@ -85,7 +85,7 @@ export const fetchUnBlockUsers = createAsyncThunk(
 export const fetchRemoveUser = createAsyncThunk(
     'news/fetchRemoveUser',
     async (userId) => {
-        const {data} = await axios.delete(`/delete/${userId}`, userId)
+        const {data} = await axios.delete(`/delete/${userId}`)
         return data
     })
 
@@ -107,11 +107,12 @@ const authSlice = createSlice({
             state.status = action.payload.message
             state.data = action.payload
             state.token = action.payload.token
+            state.isAuth = true;
         })
         builder.addCase(fetchLogin.rejected, (state, action) => {
             state.loading = false;
             state.status = action.payload
-
+            state.isAuth = false;
         })
         builder.addCase(fetchAuthMe.pending, (state) => {
             state.loading = true;
